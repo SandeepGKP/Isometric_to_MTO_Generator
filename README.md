@@ -60,7 +60,7 @@ graph LR
 
 ---
 
-## 📁 Enterprise Folder Structure
+## 📁 Folder Structure
 
 ```text
 Isometric_to_MTO_Generator/
