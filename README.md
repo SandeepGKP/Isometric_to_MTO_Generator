@@ -60,10 +60,40 @@ graph LR
 
 ---
 
+## 📁 Enterprise Folder Structure
+
+```text
+Isometric_to_MTO_Generator/
+├── backend/                  # FastAPI Application
+│   ├── app/                  # Main Application Code
+│   │   ├── api/endpoints/    # Modular API Routes (upload, mto, health)
+│   │   ├── core/             # Global State & Config (in-memory store)
+│   │   ├── schemas/          # Pydantic Data Models
+│   │   ├── services/         # Business Logic (AI Pipeline)
+│   │   └── main.py           # FastAPI Entry Point
+│   ├── tests/                # Pytest Test Suite
+│   ├── .env.example          # Environment Variables Template
+│   ├── Dockerfile            # Backend Docker Config
+│   └── requirements.txt      # Python Dependencies
+├── frontend/                 # Next.js Application
+│   ├── src/                  # Source Code
+│   │   ├── app/              # App Router Pages & Layouts
+│   │   ├── components/       # Reusable UI Components (Tailwind + Framer Motion)
+│   │   ├── lib/              # Utility Functions
+│   │   └── types/            # TypeScript Interfaces
+│   ├── next.config.ts        # Next.js Config
+│   ├── package.json          # Node Dependencies
+│   └── tailwind.config.ts    # Tailwind Config
+├── docker-compose.yml        # Multi-container Orchestration
+└── README.md                 # Project Documentation
+```
+
+---
+
 ## 🧠 How the AI Pipeline Works
 
 1. **Pre-processing:** The uploaded file is saved temporarily. If it is a PDF, it is dynamically rendered into a high-res PNG image.
-2. **Extraction:** The image is sent to the `gemini-1.5-flash` model alongside a heavily engineered system prompt. The prompt includes domain rules for counting pipes (by length), fittings/valves (by count), and inferring gaskets and bolts.
+2. **Extraction:** The image is sent to the `gemini-3.5-flash` model alongside a heavily engineered system prompt. The prompt includes domain rules for counting pipes (by length), fittings/valves (by count), and inferring gaskets and bolts.
 3. **Structured Output:** The AI is strictly instructed to return a JSON object that maps perfectly to our Pydantic schema in the backend.
 4. **Graceful Fallback:** If no `GEMINI_API_KEY` is provided, or if the API call drops, the `ai_pipeline.py` safely catches the error and instantly returns a hardcoded mock MTO response, ensuring the application never crashes.
 
