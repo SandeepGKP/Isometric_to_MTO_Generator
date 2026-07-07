@@ -1,0 +1,27 @@
+# Environment variables
+.env
+.env.local
+.venv
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+.next/
+out/
+build/
+
+# Project specific
+temp_uploads/
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db

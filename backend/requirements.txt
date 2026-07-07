@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+python-multipart
+google-genai
+python-dotenv
+pymupdf
+pytest
+httpx<0.28.0
+openpyxl
