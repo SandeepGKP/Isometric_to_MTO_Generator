@@ -33,9 +33,18 @@ export function UploadArea({ onUpload, loading }: UploadAreaProps) {
     maxFiles: 1,
   });
 
-  const handleProcess = () => {
+  const handleProcess = async () => {
     if (file) {
-      onUpload(file);
+      setError(null);
+      try {
+        await onUpload(file);
+      } catch (err: any) {
+        if (err.response && err.response.data && err.response.data.detail) {
+          setError(err.response.data.detail);
+        } else {
+          setError("An error occurred during processing.");
+        }
+      }
     }
   };
 
@@ -70,7 +79,7 @@ export function UploadArea({ onUpload, loading }: UploadAreaProps) {
             <h3 className="text-xl font-semibold text-slate-800">
               {isDragActive ? "Drop drawing here..." : "Drag & drop your drawing"}
             </h3>
-            <p className="text-slate-500 mt-2 font-medium">Supports PNG, JPG, or PDF (Max 20MB)</p>
+            <p className="text-slate-500 mt-2 font-medium text-sm">Only Isometric Drawings of pipelines are allowed (PDF, JPG, PNG. Max 20MB).</p>
           </div>
         </div>
       </div>

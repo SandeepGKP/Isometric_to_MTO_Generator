@@ -33,6 +33,7 @@ class MTOSummary(BaseModel):
     field_welds: int = Field(default=0, description="Total number of field welds found")
 
 class MTOResponse(BaseModel):
+    is_isometric_drawing: bool = Field(default=True, description="True if the image is a piping isometric drawing, False otherwise")
     drawing_meta: DrawingMeta
     items: List[MTOItem]
     summary: MTOSummary

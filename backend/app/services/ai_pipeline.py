@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 # Mock data to use when no API key is available or on failure
 MOCK_MTO_DATA = {
+    "is_isometric_drawing": True,
     "drawing_meta": {
         "drawing_no": "ISO-1501-01",
         "revision": "2",
@@ -119,8 +120,7 @@ MOCK_MTO_DATA = {
 
 PROMPT_TEXT = """
 You are an expert piping engineer. You have been given an image of a piping isometric drawing.
-Your task is to extract a Material Take-Off (MTO) - a structured bill of materials listing every pipe, 
-fitting, flange, valve, gasket, and bolt set present on the drawing.
+FIRST, verify if the image is actually a piping isometric drawing. If it is NOT (e.g. a random photo or unrelated document), you MUST set "is_isometric_drawing" to false and leave all other lists/fields empty. If it IS an isometric drawing, set "is_isometric_drawing" to true and extract the Material Take-Off (MTO) following these rules:
 
 Domain Rules:
 1. Pipes are straight lines. They are quantified by total length in meters (unit="M").
@@ -133,6 +133,7 @@ Domain Rules:
 
 You MUST return a JSON object matching this exact structure:
 {
+  "is_isometric_drawing": true,
   "drawing_meta": { "drawing_no": "", "revision": "", "line_number": "", "nps": "", "material_class": "", "service": "" },
   "items": [
     { "item_no": 1, "category": "PIPE|FITTING|FLANGE|VALVE|GASKET|BOLT", "description": "", "size_nps": "", "schedule_rating": "", "material_spec": "", "end_type": "", "quantity": 1, "unit": "M|EA|SET", "length_m": 10.5, "confidence": 0.9, "remarks": "" }

@@ -22,7 +22,16 @@ def get_mto(job_id: str):
     file_path = job["file_path"]
     
     try:
+        # Call the AI pipeline
         mto_response = extract_mto_from_image(file_path)
+        
+        # Verify it is actually an isometric drawing
+        if hasattr(mto_response, "is_isometric_drawing") and not mto_response.is_isometric_drawing:
+            job["status"] = "failed"
+            job["error"] = "Only Isometric Drawings of pipelines are allowed (PDF, JPG, PNG. Max 20MB)."
+            raise HTTPException(status_code=400, detail="Only Isometric Drawings of pipelines are allowed (PDF, JPG, PNG. Max 20MB).")
+            
+        # Update job with success
         job["status"] = "completed"
         job["mto_data"] = mto_response
         return mto_response
