@@ -163,7 +163,7 @@ def extract_mto_from_image(image_path: str) -> MTOResponse:
             img = Image.open(image_path)
         
         response = client.models.generate_content(
-            model='gemini-3.5-flash',
+            model='gemini-2.0-flash',
             contents=[PROMPT_TEXT, img],
             config=types.GenerateContentConfig(
                 response_mime_type="application/json"

@@ -19,7 +19,7 @@ out/
 build/
 
 # Project specific
-temp_uploads/
+# temp_uploads/
 *.zip
 
 # OS
