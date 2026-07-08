@@ -31,6 +31,7 @@
 - **PDF Pre-processing:** Automatically detects PDF uploads and renders them to high-resolution PNGs behind the scenes using PyMuPDF.
 - **Dynamic Frontend:** Highly polished UI with Framer Motion animations, side-by-side preview, and "Confidence Visualization" badges.
 - **Universal Exports:** Download the final structured MTO as both **CSV** and **Excel (.xlsx)**.
+- **Interactive API Docs:** Automatic Swagger UI generation available out-of-the-box at `/docs` for instantaneous API testing.
 - **Graceful Fallback:** Automatically switches to a robust Mock Pipeline if the API key is missing—guaranteeing 100% uptime.
 
 ---
@@ -93,7 +94,7 @@ Isometric_to_MTO_Generator/
 ## 🧠 How the AI Pipeline Works
 
 1. **Pre-processing:** The uploaded file is saved temporarily. If it is a PDF, it is dynamically rendered into a high-res PNG image.
-2. **Extraction:** The image is sent to the `gemini-3.5-flash` model alongside a heavily engineered system prompt. The prompt includes domain rules for counting pipes (by length), fittings/valves (by count), and inferring gaskets and bolts.
+2. **Extraction:** The image is sent to the `gemini-2.0-flash` model alongside a heavily engineered system prompt. The prompt includes domain rules for counting pipes (by length), fittings/valves (by count), and inferring gaskets and bolts.
 3. **Structured Output:** The AI is strictly instructed to return a JSON object that maps perfectly to our Pydantic schema in the backend.
 4. **Graceful Fallback:** If no `GEMINI_API_KEY` is provided, or if the API call drops, the `ai_pipeline.py` safely catches the error and instantly returns a hardcoded mock MTO response, ensuring the application never crashes.
 
