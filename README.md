@@ -141,3 +141,25 @@ To prevent HTTP timeouts during heavy load (e.g., uploading a massive 50-page PD
 ### 3. Persistent Scalable Storage
 * **Database:** Replace the in-memory dictionary with **PostgreSQL** (using SQLAlchemy) to store historical MTO extraction logs and user accounts.
 * **Blob Storage:** Uploaded drawings and generated Excel/CSV exports would be stored safely in **AWS S3** or Google Cloud Storage, allowing users to retrieve past extractions at any time.
+
+### 🔮 Future Architecture Diagram
+
+```mermaid
+graph TD
+    A[Next.js Frontend] -->|1. Upload File| B[FastAPI API Gateway]
+    B -->|2. Save File| C[(AWS S3 Storage)]
+    B -->|3. Publish Job| D[Redis Message Queue]
+    B -.->|4. Return Job ID| A
+    
+    A -->|5. WebSocket Subscribe| E[FastAPI WebSocket Server]
+    
+    D -->|6. Consume Job| F[Celery Worker Cluster]
+    F -->|7a. YOLOv8 Bounding Boxes| G[Custom CV Model]
+    F -->|7b. OCR & Data Extraction| H[Google Gemini API]
+    
+    F -->|8. Save Results| I[(PostgreSQL DB)]
+    F -->|9. Publish 'Complete' Event| D
+    
+    D -->|10. Broadcast| E
+    E -.->|11. Real-time Update| A
+```
