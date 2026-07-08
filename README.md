@@ -165,7 +165,44 @@ docker-compose up --build
 
 ---
 
-## 🚀 Future Improvements
-1. **Classical Computer Vision Fallback:** Implement OpenCV template matching to find standard valve/fitting symbols to augment the LLM's findings.
-2. **Interactive Bounding Boxes:** Ask the LLM to return bounding box coordinates and draw interactive clickable overlays on the Next.js frontend preview.
-3. **Multi-page PDFs:** Add PDF splitting logic to iteratively process complex multi-sheet isometrics.
+## 🚀 Future Enterprise Architecture Roadmap
+
+While this submission represents a complete, robust MVP, deploying this application to process thousands of drawings simultaneously in a true enterprise environment (like Pathnovo's scale) would require the following architectural evolutions:
+
+### 1. Advanced Hybrid AI Pipeline (with Bounding Boxes)
+Instead of relying solely on an LLM, the future pipeline would use a **Hybrid AI Approach**:
+* **YOLOv8 Object Detection:** A custom-trained YOLO CV model would first scan the drawing to detect exact X/Y coordinates for valves, flanges, and piping.
+* **Interactive UI:** The frontend would overlay these bounding boxes onto the Next.js preview window, allowing users to hover over a valve and see its exact extracted metadata.
+* **LLM Augmentation:** Gemini would only be used for OCR and complex reasoning (extracting tables and mapping lines).
+
+### 2. Asynchronous Event-Driven Processing
+To prevent HTTP timeouts during heavy load (e.g., uploading a massive 50-page PDF):
+* **Message Broker:** Uploads would instantly drop a job ID into a **Redis / RabbitMQ** message queue.
+* **Worker Nodes:** Background **Celery** workers would pick up jobs from the queue and process the heavy Gemini/CV pipeline asynchronously.
+* **WebSockets/SSE:** The Next.js frontend would connect via WebSockets or Server-Sent Events (SSE) to receive real-time, granular progress updates (e.g., *“30% - Rendering PDF...”, “60% - AI Scanning...”*).
+
+### 3. Persistent Scalable Storage
+* **Database:** Replace the in-memory dictionary with **PostgreSQL** (using SQLAlchemy) to store historical MTO extraction logs and user accounts.
+* **Blob Storage:** Uploaded drawings and generated Excel/CSV exports would be stored safely in **AWS S3** or Google Cloud Storage, allowing users to retrieve past extractions at any time.
+
+### 🔮 Future Architecture Diagram
+
+```mermaid
+graph TD
+    A[Next.js Frontend] -->|1. Upload File| B[FastAPI API Gateway]
+    B -->|2. Save File| C[(AWS S3 Storage)]
+    B -->|3. Publish Job| D[Redis Message Queue]
+    B -.->|4. Return Job ID| A
+    
+    A -->|5. WebSocket Subscribe| E[FastAPI WebSocket Server]
+    
+    D -->|6. Consume Job| F[Celery Worker Cluster]
+    F -->|7a. YOLOv8 Bounding Boxes| G[Custom CV Model]
+    F -->|7b. OCR & Data Extraction| H[Google Gemini API]
+    
+    F -->|8. Save Results| I[(PostgreSQL DB)]
+    F -->|9. Publish 'Complete' Event| D
+    
+    D -->|10. Broadcast| E
+    E -.->|11. Real-time Update| A
+```
